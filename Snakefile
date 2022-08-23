@@ -34,9 +34,9 @@ rule target:
 
 rule samtools_flagstat_viral_contigs:
     input:
-        'output/nanopore/minimap2_viral_contigs/mapped_nanopore_initial_viral.sam'
+        'output/minimap2_initial_viral_contigs/minimap2.sam'
     output:
-        'output/nanopore/minimap2_viral_contigs/mapping_stats.out'
+        'output/minimap2_initial_viral_contigs/mapping_stats.out'
     log:
         'output/logs/samtools_flagstat_viral_contigs.log'
     shell:
@@ -46,9 +46,9 @@ rule samtools_flagstat_viral_contigs:
 rule minimap2_viral_contigs:
     input:
         genome = 'data/initial_viral_contigs.fasta',
-        reads = 'output/nanopore/extract-non-hyp/non-hyp-non-human-reads.fq.gz'
+        reads = 'output/illumina/extract-non-hyp/non-hyp-reads.fq.gz'
     output:
-        sam = 'output/nanopore/minimap2_viral_contigs/mapped_nanopore_initial_viral.sam'
+        sam = 'output/minimap2_initial_viral_contigs/minimap2.sam'
     threads:
         20
     singularity:
@@ -333,7 +333,7 @@ rule guppy_basecalling:
     threads:
         40
     shell:
-        "bin/ont-guppy/bin/guppy_basecaller "
+        "bin/ont-guppy/bin/guppy_basecaller " # version 6.0.0
         "--device 'cuda:0' " # on bcc3
         "--input_path {input} "
         "--save_path {params.wd} "
