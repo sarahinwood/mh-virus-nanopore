@@ -15,18 +15,19 @@ bbduk_container = 'shub://TomHarrop/singularity-containers:bbmap_38.00'
 rule target:
     input:
         # nanopore mapping
-        expand('output/nanopore-{mode}/minimap2-{mode}/samtools_coverage.out', mode=["hac", 'sup']),
-        expand('output/nanopore-{mode}/joined/hyp-nanopore-{mode}_1_trimmed_fastqc.zip', mode=["hac", 'sup']),
-        expand('output/nanopore-{mode}/minimap2-{mode}/mapping_stats.out', mode=["hac", 'sup']),
+        expand('output/nanopore-{mode}/minimap2-{mode}/samtools_coverage.out', mode=["hac"]),
+        expand('output/nanopore-{mode}/joined/hyp-nanopore-{mode}_1_trimmed_fastqc.zip', mode=["hac"]),
+        expand('output/nanopore-{mode}/minimap2-{mode}/mapping_stats.out', mode=["hac"]),
         # non-hyp reads
             # illumina
         'output/illumina/extract-non-hyp/non-hyp-reads-repaired_r1.fq',
         'output/illumina/extract-non-hyp/non-hyp-reads_fastqc.zip',
         'output/illumina/kraken/kraken_all_report.txt',
+        'output/illumina/minimap2_initial_viral_contigs/mapping_stats.out',
             # nanopore
         'output/nanopore-sup/extract-non-hyp/non-hyp-reads.fq.gz',
-        expand('output/nanopore-{mode}/extract-non-hyp/non-hyp-fasta-faidx.out', mode=["hac", "sup"]),
-        #'output/nanopore/minimap2_viral_contigs/mapping_stats.out'
+        expand('output/nanopore-{mode}/extract-non-hyp/non-hyp-fasta-faidx.out', mode=["hac"]),
+        'output/nanopore/minimap2_viral_contigs/mapping_stats.out'
 
 ###########################################
 ## map non-hyp nanopore to viral contigs ##
@@ -34,9 +35,9 @@ rule target:
 
 rule samtools_flagstat_viral_contigs:
     input:
-        'output/minimap2_initial_viral_contigs/minimap2.sam'
+        'output/illumina/minimap2_initial_viral_contigs/minimap2.sam'
     output:
-        'output/minimap2_initial_viral_contigs/mapping_stats.out'
+        'output/illumina/minimap2_initial_viral_contigs/mapping_stats.out'
     log:
         'output/logs/samtools_flagstat_viral_contigs.log'
     shell:
@@ -48,7 +49,7 @@ rule minimap2_viral_contigs:
         genome = 'data/initial_viral_contigs.fasta',
         reads = 'output/illumina/extract-non-hyp/non-hyp-reads.fq.gz'
     output:
-        sam = 'output/minimap2_initial_viral_contigs/minimap2.sam'
+        sam = 'output/illumina/minimap2_initial_viral_contigs/minimap2.sam'
     threads:
         20
     singularity:
